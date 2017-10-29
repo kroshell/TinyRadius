@@ -17,8 +17,9 @@ import java.net.SocketException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tinyradius.attribute.RadiusAttribute;
 import org.tinyradius.packet.RadiusPacket;
 import org.tinyradius.util.RadiusEndpoint;
@@ -265,6 +266,6 @@ public abstract class RadiusProxy extends RadiusServer {
 
 	private int proxyPort = 1814;
 	private DatagramSocket proxySocket = null;
-	private static Log logger = LogFactory.getLog(RadiusProxy.class);
+	private static Logger logger = LogManager.getLogger(RadiusProxy.class);
 
 }

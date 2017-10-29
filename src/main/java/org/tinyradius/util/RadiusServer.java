@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tinyradius.attribute.RadiusAttribute;
 import org.tinyradius.packet.AccessRequest;
 import org.tinyradius.packet.AccountingRequest;
@@ -35,6 +35,8 @@ import org.tinyradius.packet.RadiusPacket;
  * accountingRequestReceived().
  */
 public abstract class RadiusServer {
+	
+	private static Logger logger = LogManager.getLogger(RadiusServer.class);
 
 	/**
 	 * Define this executor in child class to make packet processing be made in separate threads
@@ -418,15 +420,13 @@ public abstract class RadiusServer {
 			final InetSocketAddress remoteAddress = new InetSocketAddress(packetIn.getAddress(), packetIn.getPort());
 			final String secret = getSharedSecret(remoteAddress, makeRadiusPacket(packetIn, "1234567890", RadiusPacket.RESERVED));
 			if (secret == null) {
-				if (logger.isInfoEnabled())
-					logger.info("ignoring packet from unknown client " + remoteAddress + " received on local address " + localAddress);
+				logger.debug("ignoring packet from unknown client {} received on local address {}", remoteAddress, localAddress);
 				return;
 			}
 
 			// parse packet
 			final RadiusPacket request = makeRadiusPacket(packetIn, secret, RadiusPacket.UNDEFINED);
-			if (logger.isInfoEnabled())
-				logger.info("received packet from " + remoteAddress + " on local address " + localAddress + ": " + request);
+			logger.debug("received packet from {} on local address {}: {}", remoteAddress, localAddress, request);
 
 			// handle packet
 			logger.trace("about to call RadiusServer.handlePacket()");
@@ -434,13 +434,12 @@ public abstract class RadiusServer {
 
 			// send response
 			if (response != null) {
-				if (logger.isInfoEnabled())
-					logger.info("send response: " + response);
+				logger.debug("send response: {}", response);
 				final DatagramPacket packetOut = makeDatagramPacket(response, secret, remoteAddress.getAddress(), packetIn.getPort(), request);
 				s.send(packetOut);
 			}
 			else
-				logger.info("no response sent");
+				logger.debug("no response sent");
 		}
 		catch (IOException ioe) {
 			// error while reading/writing socket
@@ -632,7 +631,6 @@ public abstract class RadiusServer {
 	private List receivedPackets = new LinkedList();
 	private long duplicateInterval = 30000; // 30 s
 	protected transient boolean closing = false;
-	private static Log logger = LogFactory.getLog(RadiusServer.class);
 
 }
 

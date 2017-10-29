@@ -15,8 +15,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.tinyradius.packet.AccessRequest;
 import org.tinyradius.packet.AccountingRequest;
 import org.tinyradius.packet.RadiusPacket;
@@ -415,6 +416,6 @@ public class RadiusClient {
 	private int retryCount = 3;
 	private int socketTimeout = 3000;
 	private String authProtocol = AccessRequest.AUTH_PAP;
-	private static Log logger = LogFactory.getLog(RadiusClient.class);
+	private static Logger logger = LogManager.getLogger(RadiusClient.class);
 
 }
